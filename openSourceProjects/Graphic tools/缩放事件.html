@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title></title>
+    <script src="js/d3.min.js"></script>
+</head>
+<body>
+
+</body>
+</html>
+<script>
+    var _svg=d3.select('body')
+            .append('svg')
+            .attr('width',500)
+            .attr('height',400)
+            .style('background','green');
+    _svg.call(
+        d3.zoom()
+                .on('zoom',function(){
+                    console.log(d3.event);
+                    var x=d3.event.transform.x;
+                    var y=d3.event.transform.y;
+                    var k=d3.event.transform.k;
+                    d3.select(this).attr('transform','scale('+k+')')
+                }
+        )
+    );
+    var _rect=_svg.append('rect')
+            .attr('x',100)
+            .attr('y',100)
+            .attr('width',100)
+            .attr('height',100)
+            .call(
+            d3.zoom()
+                    .on('zoom',function(){
+                        var x=d3.event.transform.x;
+                        var y=d3.event.transform.y;
+                        var k=d3.event.transform.k;
+                        d3.select(this).attr('transform','translate('+x+','+y+')scale('+k+')')
+                    }
+            )
+    )
+</script>

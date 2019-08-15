@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script src="js/d3.min.js"></script>
+    <script src="js/jquery-3.2.1.min.js"></script>
+    <style>
+        #leftTop{
+            width: 50%;
+            height: 800px;
+            background: rgb(10, 16, 42);
+        }
+        .prompts{
+            position: absolute;
+            width:130px;
+            height:auto;
+            font-family: "微软雅黑";
+            color: #FFFFFF;
+            background-color: rgba(0,0,0,0.4);
+            padding: 10px;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+<div id="leftTop"></div>
+</body>
+</html>
+<script>
+    var pieDataset = [
+        {'name': '机器人', 'value': 92},
+        {'name': '计算机视觉', 'value': 96},
+        {'name': '自然语言处理', 'value': 77},
+        {'name': '深度学习', 'value': 26},
+        {'name': '智能驾驶', 'value': 35}
+    ];
+    function drawPie(divname, dataset) {
+        var pieFlag = 0;
+        function wwwa() {
+            pieFlag = 1;
+        }
+        setTimeout(wwwa, 5500);
+
+
+        var svgwidth = $('#' + divname).width();
+        var svgheight = $('#' + divname).height();
+//        dataset.sort(function(a,b){
+//            return d3.ascending(a.value,b.value)
+//        });
+        var _pie = d3.pie()
+//                .padAngle(Math.PI*0.005)
+                .sort(null)
+                .value(function (d, i) {
+                    return d.value
+                });
+        var _arcdata = _pie(dataset);
+        var _arc = d3.arc()
+                .innerRadius(0)
+                .outerRadius(100);
+        var _svg = d3.select('#' + divname)
+                .append('svg')
+                .attr('width', svgwidth)
+                .attr('height', svgheight);
+
+
+        var _totalduration = 0;
+        var _gpie = _svg.append('g')
+                .attr('id', divname + 'gpie');
+        var _odiv = d3.select('#' + divname)
+                .append('div')
+                .attr('class', 'prompts');
+
+
+        //  添加文字
+        var pieText = function () {
+            _gpie.selectAll('text')
+                    .data(_arcdata)
+                    .enter()
+                    .append('text')
+                    .attr('x', function (d, i) {
+                        return _arc.centroid(d)[0]
+                    })
+                    .attr('y', function (d, i) {
+                        return _arc.centroid(d)[1]
+                    })
+                    .text(function (d, i) {
+                        return Math.round(d.value / 366 * 100) + '%';
+                    })
+                    .attr("cursor", "pointer")
+                    .attr('text-anchor', 'middle')
+                    .attr('fill', 'rgb(10,16,42)')
+                    .attr('transform', 'translate(' + (svgwidth / 2 + svgwidth / 10) + ',' + svgheight / 2 + ')')
+                    .attr('class', function (d, i) {
+                        return d.data.name
+                    })
+                    .on('mouseover', function (d, i) {
+                        if (pieFlag == 1) {
+                            var deviation = _arc.centroid(d);
+                            var deviationx = deviation[0] / 4;
+                            var deviationy = deviation[1] / 4;
+                            d3.select(this)
+                                    .transition()
+                                    .duration(function (d, i) {
+                                        return 400;
+                                    })
+                                    .attr('transform', 'translate(' + (svgwidth / 2 + svgwidth / 10 + deviationx) + ',' + (svgheight / 2 + deviationy) + ')');
+                            _gpie.selectAll('#' + d.data.name)
+                                    .transition()
+                                    .duration(function (d, i) {
+                                        return 400;
+                                    })
+                                    .attr('transform', 'translate(' + (svgwidth / 2 + svgwidth / 10 + deviationx) + ',' + (svgheight / 2 + deviationy) + ')');
+                            var offsetleft = $('#leftTop').offset().left;
+                            var offsettop = $('#leftTop').offset().top;
+                            var _tooptipx = d3.event.clientX;
+                            var _tooptipy = d3.event.clientY;
+                            _odiv.style('left', (_tooptipx - offsetleft + 15) + 'px')
+                                    .style('top', (_tooptipy - offsettop + 15) + 'px')
+                                    .style("display", 'block')
+                                    .html("运营项目：" + d.data['name'] + '<br/>' + '公司数量：' + d.data['value'] + '家');
+                        }
+                    })
+                    .on('mousemove', function (d, i) {
+                        if (pieFlag == 1) {
+                            var offsetleft = $('#leftTop').offset().left;
+                            var offsettop = $('#leftTop').offset().top;
+                            var _tooptipx = d3.event.clientX;
+                            var _tooptipy = d3.event.clientY;
+                            _odiv.style('left', (_tooptipx - offsetleft + 15) + 'px')
+                                    .style('top', (_tooptipy - offsettop + 15) + 'px')
+                                    .style("display", 'block')
+                                    .html("运营项目：" + d.data['name'] + '<br/>' + '公司数量：' + d.data['value'] + '家');
+                        }
+                    })
+                    .on('mouseout', function (d, i) {
+                        if (pieFlag == 1) {
+                            d3.select(this)
+                                    .transition()
+                                    .duration(function (d, i) {
+                                        return 400;
+                                    })
+                                    .attr('transform', 'translate(' + (svgwidth / 2 + svgwidth / 10) + ',' + svgheight / 2 + ')');
+                            _gpie.selectAll('#' + d.data.name)
+                                    .transition()
+                                    .duration(function (d, i) {
+                                        return 400;
+                                    })
+                                    .attr('transform', 'translate(' + (svgwidth / 2 + svgwidth / 10) + ',' + svgheight / 2 + ')');
+                            _odiv.style("display", 'none');
+                        }
+                    });
+        };
+
+
+        // 画饼
+        _gpie.selectAll('path')
+                .data(_arcdata)
+                .enter()
+                .append('path')
+                .attr('transform', 'translate(' + (svgwidth / 2 + svgwidth / 10) + ',' + svgheight / 2 + ')')
+                .attr('fill', function (d, i) {
+                    return d3.schemeCategory10[i];
+                })
+                .attr("cursor", "pointer")
+                .on('mouseover', function (d, i) {
+                    if (pieFlag == 1) {
+                        var deviation = _arc.centroid(d);
+                        var deviationx = deviation[0] / 4;
+                        var deviationy = deviation[1] / 4;
+                        _gpie.selectAll('.' + d.data.name)
+                                .transition()
+                                .duration(function (d, i) {
+                                    return 400;
+                                })
+                                .attr('transform', 'translate(' + (svgwidth / 2 + svgwidth / 10 + deviationx) + ',' + (svgheight / 2 + deviationy) + ')');
+                        d3.select(this)
+                                .transition()
+                                .duration(function (d, i) {
+                                    return 400;
+                                })
+                                .attr('transform', 'translate(' + (svgwidth / 2 + svgwidth / 10 + deviationx) + ',' + (svgheight / 2 + deviationy) + ')');
+                        var offsetleft = $('#leftTop').offset().left;
+                        var offsettop = $('#leftTop').offset().top;
+                        var _tooptipx = d3.event.clientX;
+                        var _tooptipy = d3.event.clientY;
+                        _odiv.style('left', (_tooptipx - offsetleft + 15) + 'px')
+                                .style('top', (_tooptipy - offsettop + 15) + 'px')
+                                .style("display", 'block')
+                                .html("运营项目：" + d.data['name'] + '<br/>' + '公司数量：' + d.data['value'] + '家');
+                    }
+                })
+                .on('mousemove', function (d, i) {
+                    if (pieFlag == 1) {
+                        var offsetleft = $('#leftTop').offset().left;
+                        var offsettop = $('#leftTop').offset().top;
+                        var _tooptipx = d3.event.clientX;
+                        var _tooptipy = d3.event.clientY;
+                        _odiv.style('left', (_tooptipx - offsetleft + 15) + 'px')
+                                .style('top', (_tooptipy - offsettop + 15) + 'px')
+                                .style("display", 'block')
+                                .html("运营项目：" + d.data['name'] + '<br/>' + '公司数量：' + d.data['value'] + '家');
+                    }
+                })
+                .on('mouseout', function (d, i) {
+                    if (pieFlag == 1) {
+                        _gpie.selectAll('.' + d.data.name)
+                                .transition()
+                                .duration(function (d, i) {
+                                    return 400;
+                                })
+                                .attr('transform', 'translate(' + (svgwidth / 2 + svgwidth / 10) + ',' + svgheight / 2 + ')');
+                        d3.select(this)
+                                .transition()
+                                .duration(function (d, i) {
+                                    return 400;
+                                })
+                                .attr('transform', 'translate(' + (svgwidth / 2 + svgwidth / 10) + ',' + svgheight / 2 + ')');
+                        _odiv.style("display", 'none')
+                    }
+                })
+                .each(function (d, i) {
+                    d.duration = (d.endAngle - d.startAngle) / (2 * Math.PI) * 10;
+                    d.delay = _totalduration;
+                    _totalduration = _totalduration + d.duration;
+                })
+                .transition()
+                .duration(function (d, i) {
+                    return d.duration * 500
+                })
+                .delay(function (d, i) {
+                    return d.delay * 500
+                })
+                .ease(d3.easeLinear)
+                .tween('path', function (d, i) {
+                    var _this = this;
+                    var initEndAngle = d.endAngle;
+                    return function (t) {
+                        d.endAngle = d.startAngle + t * (initEndAngle - d.startAngle);
+                        d3.select(_this)
+                                .attr('d', _arc(d));
+                    }
+                })
+                .attr('class', function (d, i) {
+                    return divname + 'path' + i;
+                })
+                .attr('id', function (d, i) {
+                    return d.data.name
+                })
+                .call(function () {
+                    setTimeout(pieText, 5000);
+                });
+
+
+//              图例
+        var _legend = _svg.append('g')
+                .attr('id', divname + 'legend');
+        _legend.selectAll('rect')
+                .data(dataset)
+                .enter()
+                .append('rect')
+                .attr('x', 40)
+                .attr('y', function (d, i) {
+                    return svgheight / 8 + 30 * i
+                })
+                .attr('width', 20)
+                .attr('height', 15)
+                .attr('rx', 4)
+                .attr('rx', 4)
+                .attr("cursor", "pointer")
+                .attr('fill', function (d, i) {
+                    return d3.schemeCategory10[i];
+                })
+                .on('mouseover', function (d, i) {
+                    if (pieFlag == 1) {
+                        var res = this.getAttribute('class');
+                        sttr(res);
+                    }
+                })
+                .on('mouseout', function (d, i) {
+                    if (pieFlag == 1) {
+                        var res = this.getAttribute('class');
+                        sttrend(res);
+                    }
+                })
+                .attr('class', function (d, i) {
+                    return divname + 'path' + i;
+                });
+
+
+        //  图例文字
+        _legend.selectAll('text')
+                .data(dataset)
+                .enter()
+                .append('text')
+                .attr('x', 50 + 20)
+                .attr('y', function (d, i) {
+                    return svgheight / 8 + 30 * i
+                })
+                .text(function (d, i) {
+                    return d.name
+                })
+                .attr("dy", "0.9em")
+                .attr('font-size', 14)
+                .style('fill', 'white')
+                .attr("cursor", "pointer")
+                .on('mouseover', function (d, i) {
+                    if (pieFlag == 1) {
+                        var res = this.getAttribute('class');
+                        sttr(res);
+                    }
+                })
+                .on('mouseout', function (d, i) {
+                    if (pieFlag == 1) {
+                        var res = this.getAttribute('class');
+                        sttrend(res);
+                    }
+                })
+                .attr('class', function (d, i) {
+                    return divname + 'path' + i;
+                });
+
+
+        function sttr(res) {
+            _gpie.selectAll('.' + res);
+            _gpie.selectAll('.' + res)
+                    .transition()
+                    .duration(function (d, i) {
+                        return 400;
+                    })
+                    .attr('transform', 'translate(' + (svgwidth / 2 + svgwidth / 10) + ',' + svgheight / 2 + ') scale(1.2)')
+        };
+
+
+        function sttrend(res) {
+            _gpie.selectAll('.' + res);
+            _gpie.selectAll('.' + res)
+                    .transition()
+                    .duration(function (d, i) {
+                        return 400;
+                    })
+                    .attr('transform', 'translate(' + (svgwidth / 2 + svgwidth / 10) + ',' + svgheight / 2 + ') scale(1)')
+        };
+    }
+    drawPie('leftTop', pieDataset);
+</script>

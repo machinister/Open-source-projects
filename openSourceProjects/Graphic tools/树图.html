@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title></title>
+    <script src="js/d3.min.js"></script>
+    <script src="js/jquery-3.2.1.min.js"></script>
+    <style>
+        /*circle{*/
+            /*fill:rgba(31,119,180,0.25);*/
+            /*stroke: rgb(31,119,180);*/
+            /*stroke-width:1px;*/
+        /*}*/
+        /*.leaf{*/
+            /*fill:#ff7f0e;*/
+        /*}*/
+    </style>
+</head>
+<body>
+    <div style="position: absolute; width: 99%; height: 98%;">
+        <div id="tu1" style="float: left; width: 45%;height:98%; border: 1px solid green;"></div>
+        <div id="tu2" style="float: left; width: 45%;height: 98%;border: 1px solid red;"></div>
+    </div>
+</body>
+</html>
+<script>
+    var dataset={
+        name:'家用电器',
+        children:[
+            {   name:'电视机',
+                children:[
+                    {name:'曲面电视',price:100},
+                    {name:'超薄电视',price:80},
+                    {name:'电视配件',price:30}
+                ]
+            },
+            {   name:'空调机',
+                children:[
+                    {name:'挂式空调',price:200},
+                    {name:'立式空调',price:150}
+                ]
+            }
+        ]
+    };
+    function drawTree(divname,dataset){
+        var svgwidth=$('#'+divname).width();
+        var svgheight=$('#'+divname).height();
+        var _root=d3.hierarchy(dataset)
+                .sum(function(d,i){
+                    return d.price
+                });
+        var _tree=d3.tree()
+                .size([svgwidth,svgheight-100]);
+        var _treedata=_tree(_root);
+        var _allnodes=_treedata.descendants();
+    //    console.log(_allnodes);
+        var _svg=d3.select('#'+divname)
+                .append('svg')
+                .attr('width',svgwidth)
+                .attr('height',svgheight);
+        var _gcircle=_svg.selectAll('g')
+                .data(_allnodes)
+                .enter()
+                .append('g')
+                .attr('class','gcircle');
+        _gcircle.append('circle')
+                .attr('id',divname+'circle')
+                .attr('cx',function(d,i){
+                    return d.x
+                })
+                .attr('cy',function(d,i){
+                    return d.y+10
+                })
+                .attr('r',10)
+                .attr("class",function(d){
+                    return d.height==0?'leaf':'';
+                });
+        var _alllinks=_treedata.links();
+        console.log(_alllinks);
+        var links=_svg.selectAll('line')
+                .data(_alllinks)
+                .enter()
+                .append('path')
+                .attr('d',function(d,i){
+                    var _path=d3.path();
+                    _path.moveTo(d.source.x,d.source.y);
+                    _path.bezierCurveTo((d.source.x+d.target.x)/2,d.source.y,(d.source.x+d.target.x)/2,d.target.y,d.target.x,d.target.y);
+                    return _path.toString();
+                })
+    //            .append('line')
+    //            .attr('x1',function(d,i){
+    //                return d.source.x
+    //            })
+    //            .attr('y1',function(d,i){
+    //                return d.source.y
+    //            })
+    //            .attr('x2',function(d,i){
+    //                return d.target.x
+    //            })
+    //            .attr('y2',function(d,i){
+    //                return d.target.y
+    //            })
+                .attr('stroke','black')
+                .attr('stroke-width',1)
+                .attr('fill','none');
+        _gcircle.append('text')
+                .attr('x',function(d,i){
+                    return d.x
+                })
+                .attr('y',function(d,i){
+                    return d.y+10
+                })
+                .attr('dy','1.5em')
+                .text(function(d,i){
+                    return d.children?"":d.data.name;
+                    //return d.height==0?d.data.name:"";
+                })
+                .attr("text-anchor","middle")
+                .style('fill','black');
+        _gcircle.append('title')
+                .text(function(d,i){
+                    return '商品名称'+d.data.name+'\n'+'价格：'+d.data.price
+                });
+    }
+    drawTree('tu1',dataset)
+</script>

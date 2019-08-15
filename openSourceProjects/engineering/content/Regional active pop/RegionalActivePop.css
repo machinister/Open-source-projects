@@ -1,0 +1,132 @@
+*{
+    margin: 0;
+    padding: 0;
+}
+html,body{
+    width: 100%;
+    height: 100%;
+    /*min-width: 985px;*/
+    /*background-color:rgb(10,16,42);*/
+    /*box-sizing: border-box;*/
+    /*border: 1px solid yellow;*/
+    /*!*overflow: hidden;*!*/
+}
+#RegionalActivePop{
+    width: 100%;
+    height: 100%;
+    /*min-width: 985px;*/
+    background-color:rgb(10,16,42);
+    box-sizing: border-box;
+    /*border: 1px solid yellow;*/
+    overflow: hidden;
+}
+section, .wq-column:first-child{
+    width: calc(100% / 3);
+    height: 100%;
+    box-sizing: border-box;
+    /*border: 1px solid red;*/
+    float: left;
+}
+section:last-child, .wq-column{
+    width: calc(100% / 3 * 2);
+    height: 100%;
+    box-sizing: border-box;
+    /*border: 1px solid red;*/
+    float: left;
+}
+section, .wq-column:not(:first-child)>.wq-up{
+    width: 100%;
+    height: 50%;
+    box-sizing: border-box;
+    border: 1px solid red;
+}
+section, .wq-column:not(:first-child)>.wq-down{
+    width: 100%;
+    height: 50%;
+    box-sizing: border-box;
+    /*border: 1px solid blue;*/
+}
+section, .wq-column:not(:first-child)>.wq-down>div{
+    width: 50%;
+    height: 100%;
+    box-sizing: border-box;
+    border: 1px solid blue;
+    float: left;
+}
+section, .wq-column:first-child>.wq-up{
+    width: 100%;
+    height: 55%;
+    box-sizing: border-box;
+    border: 1px solid red;
+}
+section, .wq-column:first-child>.wq-down{
+    width: 100%;
+    height: 45%;
+    box-sizing: border-box;
+    border: 1px solid blue;
+}
+
+.wq-column>#wq-upOne{
+    position: relative;
+    /*padding-left: 8px;*/
+    padding-right: 8px;
+}
+
+#wq-upOne>svg{
+    position:absolute ;
+}
+#wq-upOne>#svg-0{
+    z-index: 1000;
+    left:3px;
+    top:-5px;
+}
+.wq-column>#wq-downOne{
+    position: relative;
+    bottom: 0;
+    left: 0;
+    padding-top: 8px;
+    padding-bottom: 5px;
+}
+#wq-downOne>svg{
+    position:absolute ;
+}
+#wq-downOne>#wq-downOnesvg-0{
+    z-index: 1000;
+    left:3px;
+    top:3px;
+}
+
+
+
+#wq-upTwo #wq-upTwo_gxaxis path,
+#wq-upTwo #wq-upTwo_gxaxis line,
+#wq-upTwo #wq-upTwo_gyaxis path,
+#wq-upTwo #wq-upTwo_gyaxis line,
+#wq-upRight #wq-upRight_gxaxis path,
+#wq-upRight #wq-upRight_gxaxis line,
+#wq-upRight #wq-upRight_gyaxis path,
+#wq-upRight #wq-upRight_gyaxis line{
+    fill: none;
+    stroke: gray;
+    shape-rendering: crispEdges;
+}
+#wq-upTwo #wq-upTwo_gxaxis text,
+#wq-upTwo #wq-upTwo_gyaxis text,
+#wq-upRight #wq-upRight_gxaxis text,
+#wq-upRight #wq-upRight_gyaxis text{
+    fill: gray;
+    font-family: sans-serif;
+    /*font-size: 11px;*/
+}
+
+.prompts{
+    position: absolute;
+    width:130px;
+    height:auto;
+    font-family: "微软雅黑";
+    color: #FFFFFF;
+    background-color: rgba(0,0,0,0.4);
+    padding: 10px;
+    opacity:0;
+    text-align: center;
+}

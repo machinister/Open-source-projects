@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title></title>
+    <script src="js/d3.min.js"></script>
+    <script src="js/jquery-3.2.1.min.js"></script>
+</head>
+<body>
+<div style="position: absolute; width: 99%; height: 98%;">
+    <div id="tu1" style="float: left; width: 45%;height:98%; border: 1px solid green;"></div>
+    <div id="tu2" style="float: left; width: 45%;height: 98%;border: 1px solid red;"></div>
+</div>
+</body>
+</html>
+<script>
+
+    var dataset={
+        name:'家用电器',
+        children:[
+            {   name:'电视机',
+                children:[
+                    {name:'曲面电视',price:100},
+                    {name:'超薄电视',price:80},
+                    {name:'电视配件',price:30}
+                ]
+            },
+            {   name:'空调机',
+                children:[
+                    {name:'挂式空调',price:200},
+                    {name:'立式空调',price:150}
+                ]
+            }
+        ]
+    };
+    function drawRectTree(divname,dataset){
+        var svgwidth=$('#'+divname).width();
+        var svgheight=$('#'+divname).height();
+        var min=dataset.children['0'].name;
+        var max=dataset.children[dataset.children.length-1].name;
+        var _color=d3.scaleOrdinal()
+                .domain([min,max])
+                .range(['green','blue']);
+        var _root=d3.hierarchy(dataset,function(d,i){
+                return d.children
+        });
+        _root.sum(function(d,i){
+            return d.price
+        });
+        _root.each(function(d,i){
+            d.data.parentname= d.parent?d.parent.data.name:d.data.name
+        });
+        var _treemap=d3.treemap()
+                .tile(d3.treemapBinary)
+                .size([svgwidth,svgheight])
+                .paddingInner(2);
+        var _treedata=_treemap(_root)
+                .leaves();
+//        console.log(_treedata);
+        var _svg=d3.select('#'+divname)
+                .append('svg')
+                .attr('width',svgwidth)
+                .attr('height',svgheight);
+        var _grect=_svg.selectAll('g')
+                .data(_treedata)
+                .enter()
+                .append('g')
+                .attr('class','grect')
+                .attr('transform',function(d,i){
+                    return 'translate('+d.x0+','+ d.y0+')'
+                });
+        _grect.append('rect')
+                .attr('x',0)
+                .attr('y',0)
+                .attr('width',function(d,i){
+                    return d.x1-d.x0
+                })
+                .attr('height',function(d,i){
+                    return d.y1-d.y0
+                })
+                .style('fill',function(d,i){
+    //                return d3.schemeCategory10[i]
+                    return _color(d.data.parentname)
+                });
+        _grect.append('text')
+                .attr('x',0)
+                .attr('y',0)
+                .text(function(d,i){
+                    return d.data.name
+                })
+                .attr('dy','1em')
+                .style('fill','white');
+        _grect.append('title')
+                .text(function(d,i){
+                    return '商品名称'+d.data.name+'\n'+'价格：'+d.data.price
+                });
+    }
+    drawRectTree('tu1',dataset);
+</script>

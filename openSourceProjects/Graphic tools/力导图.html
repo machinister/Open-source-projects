@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title></title>
+    <script src="js/d3.min.js"></script>
+</head>
+<body>
+
+</body>
+</html>
+<script>
+    //2.定义数据
+    var data=[
+        {name:'中国',level:1},
+        {name:'北京',level:2},
+        {name:'颐和园',level:3},
+        {name:'故宫',level:3},
+        {name:'山东',level:2},
+        {name:'泰山',level:3},
+        {name:'趵突泉',level:3}
+    ];
+    //2.定义关系
+    var links=[
+        {source:'中国',target:'北京'},
+        {source:'中国',target:'山东'},
+        {source:'北京',target:'颐和园'},
+        {source:'北京',target:'故宫'},
+        {source:'山东',target:'泰山'},
+        {source:'山东',target:'趵突泉'}
+    ];
+    var _simulation=d3.forceSimulation()
+            .force('center',d3.forceCenter(300,300))
+            .force('charge',d3.forceManyBody().strength(-1000))
+            .force('link',d3.forceLink().id(function(d,i){
+                return d.name
+            }));
+    _simulation.nodes(data)
+            .on('tick',function(d,i){
+                allline.attr('x1',function(d,i){
+//                            console.log(d);
+                            return d.source.x;
+                        })
+                        .attr('y1',function(d,i){
+                            return d.source.y
+                        })
+                        .attr('x2',function(d,i){
+//                            console.log(d);
+                            return d.target.x;
+                        })
+                        .attr('y2',function(d,i){
+                            return d.target.y;
+                        })
+                        .attr('stroke','black')
+                        .attr('stroke-width',1);
+                allcircle.attr('x',function(d,i){
+                            return d.x
+                        })
+                        .attr('y',function(d,i){
+                            return d.y
+                        })
+                        .attr('r',10);
+//                        .attr('fill',function(d,i){
+//                            return d3.schemeCategory10[i]
+//                        });
+                alltext.attr('x',function(d,i){
+//                            console.log(d);
+                            return d.x
+                        })
+                        .attr('y',function(d,i){
+                            return d.y
+                        })
+                        .text(function(d,i){
+                            return d.name;
+                        })
+                        .attr('text-anchor','middle')
+                        .attr('dx','1.5em')
+                        .attr('dy','1em');
+            });
+    _simulation.force('link')
+            .links(links);
+//    console.log(data);
+    var _svg=d3.select('body')
+            .append('svg')
+            .attr('width',600)
+            .attr('height',600);
+    var allline=_svg.selectAll('line')
+            .data(links)
+            .enter()
+            .append('line');
+    var allcircle=_svg.selectAll('image')
+            .data(data)
+            .enter()
+            .append('image')
+            .attr('href',function(d,i){
+                return 'img/index001_person0'+(i+1)+'.png'
+            })
+            .attr('width',50)
+            .attr('height',50);
+    var alltext=_svg.selectAll('text')
+            .data(data)
+            .enter()
+            .append('text')
+            .style('fill','red');
+    allcircle.call(d3.drag()
+            .on('start',_dragstart)
+            .on('drag',_draging)
+            .on('end',_dragend)
+    );
+    function _dragstart(){
+        if(!d3.event.active){
+            _simulation.alphaTarget(0.3).restart();
+        }
+    }
+    function _draging(){
+        d3.event.subject.x=d3.event.x;
+        d3.event.subject.y=d3.event.y;
+    }
+    function _dragend(){
+        d3.event.subject.x=null;
+        d3.event.subject.y=null;
+    }
+</script>

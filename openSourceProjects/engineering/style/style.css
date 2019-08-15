@@ -1,0 +1,136 @@
+/*全局样式*/
+*{
+    margin: 0;
+    padding: 0;
+}
+html,body{
+    width: 100%;
+    height: 100%;
+    min-width: 985px;
+    background-color:rgb(10,16,42);
+    /*border: 1px solid yellow;*/
+}
+a{
+    text-decoration: none;
+    /*out-line: none;*/
+    color:#000;
+}
+ul{
+    margin: 0px;
+    padding: 0px;
+}
+li{
+    list-style: none;
+}
+h3, h4, h5{
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+/*头部样式*/
+#wq-header{
+    height: 50px;
+    width: 100%;
+    background-color:rgb(59,185,194);
+    /*float: left;*/
+    line-height: 50px;
+    min-width: 985px;
+}
+#wq-header h3{
+    float: left;
+    margin-left: 10px;
+    color: #fff;
+    letter-spacing:2px;
+}
+#wq-header h5{
+    float: left;
+    margin-top:21px;
+    margin-left: 20px;
+    color: #fff;
+}
+#wq-header>.wq-headerUserHelp{
+    float: right;
+}
+#wq-header>.wq-headerUserHelp>li{
+    float: left;
+    margin-left: 20px;
+    color: #fff;
+    font-size: 13px;
+}
+#wq-header>.wq-headerUserHelp>li:last-child{
+    margin-right: 30px;
+}
+#wq-header span{
+    cursor:pointer;
+}
+/*侧边栏样式*/
+#wq-main{
+    width: 100%;
+    height: calc(100% - 50px);
+    /*height:100%;*/
+    min-width: 985px;
+    padding: 0px;
+    margin: 0px;
+    /*border: 1px solid red;*/
+    overflow: auto;
+}
+#wq-sidebar{
+    padding: 0px;
+    height: 100%;
+    /*width: 15vw;*/
+    min-width: 158px;
+    /*background-color: yellow;*/
+    float: left;
+    background-color: rgb(45,77,94);
+}
+#wq-sidebar li{
+    /*width: 100vw;*/
+    text-align: center;
+    /*border: 1px solid red;*/
+    background-color: rgb(45,77,94);
+    height: 38px;
+    line-height: 38px;
+    border-bottom: 1px solid #1f3744;
+}
+#wq-sidebar ul>li:first-child{
+    background-color: rgb(31,55,68);
+}
+#wq-sidebar ul>li:not(:first-child):hover{
+    background-color: rgb(59,185,194);
+    cursor:pointer;
+}
+#wq-sidebar span{
+    color: rgb(202,219,215);
+    font-size: 16px;
+}
+#wq-sidebar .wq-sidebarTitle{
+    color:rgb(59,158,194);
+}
+#wq-sidebar img{
+    width: 16px;
+    height: 16px;
+    margin-right: 5px;
+    margin-bottom: 3px;
+}
+/*主题内容样式*/
+#wq-content{
+    padding: 0px;
+    height: 100%;
+    /*min-width: 820px;*/
+    /*width: 85vw;*/
+    /*position: absolute;*/
+    /*top: 50px;*/
+    /*right: 0;*/
+    float: left;
+    /*background-color: gray;*/
+    overflow: hidden;
+}
+#wq-content iframe{
+    width: 100%;
+    height: 100%;
+    box-sizing: border-box;
+    border: 1px solid red;
+    /*display: none;*/
+    position: absolute;
+    top: 0px;
+    left:0px;
+}

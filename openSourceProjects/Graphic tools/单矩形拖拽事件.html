@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title></title>
+    <script src="js/d3.min.js"></script>
+</head>
+<body>
+
+</body>
+</html>
+<script>
+    var _x=100;
+    var _y=100;
+    var _drag=d3.drag()
+            .on('start',function(d,i){
+
+            })
+            .on('drag',function(d,i){
+//                console.log(d3.event.x);
+                d3.select(this)
+                        .attr('x',_x)
+                        .attr('y',_y);
+                d3.select(this).attr('transform','translate('+(d3.event.x-d3.event.subject.x)+','+(d3.event.y-d3.event.subject.y)+')')
+            })
+            .on('end',function(d,i){
+                _x+=d3.event.x-d3.event.subject.x;
+                _y+=d3.event.y-d3.event.subject.y;
+            });
+    var _svg=d3.select('body')
+            .append('svg')
+            .attr('width',500)
+            .attr('height',400)
+            .style('background','yellow');
+    var _rect=_svg.append('rect')
+            .attr('x',100)
+            .attr('y',100)
+            .attr('width',100)
+            .attr('height',100)
+            .attr('fill','blue')
+            .call(_drag);
+
+</script>

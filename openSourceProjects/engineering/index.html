@@ -1,0 +1,130 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>engineering</title>
+    <link rel="stylesheet" href="./lib/bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" href="./style/style.css">
+    <script type="text/javascript" src="./lib/jquery-3.2.1.min.js"></script>
+    <script type="text/javascript" src="./lib/bootstrap/js/bootstrap.min.js"></script>
+</head>
+<body>
+
+    <header id="wq-header" class="container">
+
+        <section>
+            <h3>全国市规划大数据评估与监测平台</h3>
+            <h5>清华同衡规划设计研究院技术创新中心</h5>
+        </section>
+
+        <ul class="wq-headerUserHelp">
+            <li>
+                <img src="./img/help.png" alt="">
+                <span>说明</span>
+            </li>
+            <li>
+                <img src="./img/download.png" alt="">
+                <span>下载</span>
+            </li>
+            <li>
+                <img src="./img/welcome.png" alt="">
+            </li>
+            <li>
+                <img src="./img/exit.png" alt="">
+                <span> 退出</span>
+            </li>
+        </ul>
+
+    </header>
+
+    <section id="wq-main" class="container">
+
+        <aside id="wq-sidebar" class="col-sm-2 col-md-2">
+
+            <div class="wq-top">
+                <ul>
+                    <li>
+                        <img src="./img/pop.png" alt="">
+                        <span class="wq-sidebarTitle">人口</span>
+                    </li>
+                    <li id="RegionalActivePop">
+                        <span>区域人口迁徙</span>
+                    </li>
+                    <li id="RegionalMigration">
+                        <span>区域活动人口</span>
+                    </li>
+                    <li>
+                        <span>城市人口分布</span>
+                    </li>
+                    <li>
+                        <span>城市区县联系</span>
+                    </li>
+                </ul>
+            </div>
+
+            <div class="wq-middle">
+                <ul>
+                    <li>
+                        <img src="./img/ind.png" alt="">
+                        <span class="wq-sidebarTitle">产业</span>
+                    </li>
+                    <li>
+                        <span>区域基本情况对比</span>
+                    </li>
+                    <li>
+                        <span>区域企业发展趋势</span>
+                    </li>
+                    <li>
+                        <span>区域投资对比</span>
+                    </li>
+                    <li>
+                        <span>城市区县主导产业</span>
+                    </li>
+                    <li>
+                        <span>城市产业趋势</span>
+                    </li>
+                    <li>
+                        <span>城市产业发展评估</span>
+                    </li>
+                </ul>
+            </div>
+
+            <div class="wq-down">
+                <ul>
+                    <li>
+                        <img src="./img/fac.png" alt="">
+                        <span class="wq-sidebarTitle">服务设施</span>
+                    </li>
+                    <li>
+                        <span>服务设施空间分布</span>
+                    </li>
+                    <li>
+                        <span>单元服务设施评估</span>
+                    </li>
+                    <li>
+                        <span>服务设施水平对比</span>
+                    </li>
+                    <li>
+                        <span>设施服务范围与能力</span>
+                    </li>
+                </ul>
+            </div>
+
+        </aside>
+
+        <div id="wq-content" class="col-sm-10 col-md-10">
+
+            <!--<p>nnna</p>-->
+            <iframe class="RegionalMigration" src="./content/Regional migration/RegionalMigration.html" frameborder="0"></iframe>
+            <iframe class="RegionalActivePop" src="./content/Regional active pop/RegionalActivePop.html" frameborder="0"></iframe>
+
+        </div>
+
+        
+    </section>
+    <script type="text/javascript" src="./lib/index.js"></script>
+</body>
+</html>

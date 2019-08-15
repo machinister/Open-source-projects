@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title></title>
+    <script src="js/d3.min.js"></script>
+    <script src="js/jquery-3.2.1.min.js"></script>
+</head>
+<style>
+    .prompts {
+        position: absolute;
+        width: 130px;
+        height: auto;
+        font-family: "微软雅黑";
+        color: #FFFFFF;
+        background-color: rgba(0, 0, 0, 0.4);
+        padding: 10px;
+        opacity: 0;
+        text-align: center;
+    }
+</style>
+<body>
+<div style="position: absolute; width: 99%; height: 98%;">
+    <div id="tu1" style="float: left; width: 45%;height:98%; border: 1px solid green;"></div>
+    <div id="tu2" style="float: left; width: 45%;height: 98%;border: 1px solid red;"></div>
+</div>
+<script>
+    //2.定义数据：
+    var dataset = [200, 130, 220, 345, 456, 432, 280];
+    var ydata1 = [180, 80, 450, 900, 456, 361, 280];
+    var xdata = ['0~50', '50~100', '100~200', '200~500', '500~1000', '1000~2000', '>2000'];
+    var xdata1 = ['0~100', '100~200', '200~300', '300~400', '400~500', '500~600', '>600'];
+    //键盘控制svg的背景色切换
+    d3.select('body').on('keydown', function (d, i) {
+        var key = d3.event.key;
+        d3.selectAll('svg').style('background', 'transparent');
+        if (key == 'ArrowLeft') {
+            var fristnodes = d3.selectAll('svg').nodes()[0];
+            d3.select(fristnodes).style('background', 'gray')
+        }
+        if (key == 'ArrowRight') {
+            var secondnodes = d3.selectAll('svg').nodes()[1];
+            d3.select(secondnodes).style('background', 'gray')
+        }
+    });
+
+    function drawBar(divname, xdata, ydata, bool) {
+        //1.定义SVG宽度：
+        var svgwidth = $("#" + divname).width();
+        var svgheight = $("#" + divname).height();
+        var _margin = {top: 20, right: 30, bottom: 40, left: 50};
+        //7.定义xy轴与核心区四边距离
+        var _chartmargin = {top: 20, right: 30, bottom: 40, left: 50};
+        //5.定义标题高度：
+        var titleheight = 50;
+        //2.生成svg
+        var _svg = d3.select("#" + divname)
+            .append("svg")
+            .attr("width", svgwidth)
+            .attr("height", svgheight);
+        //4.定义主区域：
+        var _gdraw1 = _svg.append("g")
+            .attr("id", "gdraw1")
+            .attr("transform", "translate(" + _margin.left + "," + _margin.top + ")");
+        //6.定义核心区域：
+        var _gdraw2 = _gdraw1.append("g")
+            .attr("id", "gdraw2")
+            .attr("transform", "translate(0," + titleheight + ")");
+        //8.计算出主区域的宽与高
+        var chartwidth = svgwidth - _margin.left - _margin.right;
+        var chartheight = svgheight - _margin.top - _margin.bottom - titleheight;
+        //9.计算出X轴和Y轴的位置：
+        var yaxisheight = chartheight - _chartmargin.top - _chartmargin.bottom;
+        var xaxiswidth = chartwidth - _chartmargin.left - _chartmargin.right;
+        //10.定义存放x轴G组,及存入Y轴G组
+        var gxaxis = _gdraw2.append("g")
+            .attr("id", divname + "gxaxis")
+            .attr("transform", "translate(0," + yaxisheight + ")");
+        var gyaxis = _gdraw2.append("g")
+            .attr("id", divname + "gyaxis");
+        //11.定义X轴，生成X轴
+        var _scaleband = d3.scaleBand()
+            .padding(0.2)
+            .domain(xdata)
+            .range([0, xaxiswidth]);
+        var xaxis = d3.axisBottom()
+            .scale(_scaleband);
+        xaxis(gxaxis);
+        //12.定义Y轴，生成Y轴
+        var _scaleline = d3.scaleLinear()
+            .domain([0, d3.max(ydata)])
+            .nice()
+            .range([yaxisheight, 0]);
+        var yaxis = d3.axisLeft()
+            .scale(_scaleline);
+        yaxis(gyaxis);
+        var _gbar = _gdraw2.append("g")
+            .attr('id', 'gbar');
+        if (bool == true) {
+            // y轴方向上的网格线
+            gxaxis.selectAll('g')
+                .append('line')
+                .attr('x1', 0)
+                .attr('x2', 0)
+                .attr('y1', 0)
+                .attr('y2', -yaxisheight)
+                .attr('stroke', 'red')
+                .attr('stroke-width', 1);
+            //    x轴方向上的网格线
+            var ticks = _scaleline.ticks(10);
+            var updata1 = gyaxis.selectAll('.line')
+                .data(ticks);
+            enterline = updata1.enter()
+                .append('line')
+                .attr('class', 'line')
+                .attr('x1', 0)
+                .attr('x2', xaxiswidth)
+                .attr('y1', function (d, i) {
+                    return _scaleline(d);
+                })
+                .attr('y2', function (d, i) {
+                    return _scaleline(d);
+                })
+                .attr('stroke', 'red')
+                .attr('stroke-width', 1);
+            exitline = updata1.exit().remove();
+        }
+        //以下为画柱图
+        //1.直在_gdraw2中添加G组，画柱形图
+        var _odiv = d3.select('#' + divname)
+            .append('div')
+            .attr('class', 'prompts');
+        var updaterect = _gbar.selectAll("rect")
+            .data(ydata);
+        var enterrect = updaterect.enter();
+        enterrect.append("rect")
+            .attr("x", function (d, i) {
+                return _scaleband(xdata[i])
+            })
+            .attr("y", yaxisheight)
+            .attr("width", _scaleband.bandwidth())
+            .attr("height", function (d, i) {
+                return 0;
+            })
+            .attr("fill", "steelblue")
+            .on("mouseover", function (d, i) {
+                _odiv.style("left", d3.event.clientX + 'px')
+                    .style("top", d3.event.clientY + 'px')
+                    .style("opacity", 1)
+                    .html("值为：" + d)
+            })
+            .on("mousemove", function (d, i) {
+                _odiv.style("left", d3.event.clientX + 'px')
+                    .style("top", d3.event.clientY + 'px')
+                    .html("值为：" + d)
+            })
+            .on("mouseout", function (d, i) {
+                _odiv.style("opacity", 0)
+            })
+            .on('click', function (d, i) {
+                if ($(this).attr('fill') == 'green') {
+                    d3.select(this.parentNode).selectAll('rect').attr('fill', 'steelblue');
+                } else {
+//                            console.log($(this).attr('fill'));
+//                            console.log(this.getAttribute('fill');
+                    d3.select(this.parentNode).selectAll('rect').attr('fill', 'steelblue');
+                    d3.select(this).attr('fill', 'green');
+                }
+            })
+            .transition()
+            .duration(5 * 1000)
+            .attr("y", function (d, i) {
+                return _scaleline(d)
+            })
+            .attr("height", function (d, i) {
+                return yaxisheight - _scaleline(d);
+            })
+        ;
+        var exitrect = updaterect.exit().remove();
+        var updatetext = _gbar.selectAll('text')
+            .data(ydata);
+        entertext = updatetext.enter()
+            .append('text')
+            .attr('x', function (d, i) {
+                return _scaleband(xdata[i]);
+            })
+            .attr('y', yaxisheight)
+            .attr('text-anchor', 'middle')
+            .attr('dx', _scaleband.bandwidth() / 2)
+            .attr('dy', 15)
+            .style('fill', 'red')
+            .transition()
+            .duration(5 * 1000)
+            //                .attr('y',function(d,i){
+            //                    return _scaleline(d)
+            //                })
+            .tween('text', function (d) {
+//                    console.log(this);
+                var _this = this;
+                return function (t) {
+                    _this.textContent = Math.round(d * t);
+                    _this.setAttribute('y', _scaleline(t * d))
+                }
+            });
+        exittext = updatetext.exit().remove();
+    }
+
+    drawBar('tu1', xdata, dataset, true);
+    drawBar('tu2', xdata, ydata1);
+</script>
+</body>
+</html>

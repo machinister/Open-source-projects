@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title></title>
+    <script src="js/d3.min.js"></script>
+    <script src="js/jquery-3.2.1.min.js"></script>
+</head>
+<body>
+<div style="position: absolute; width: 99%; height: 98%;">
+    <div id="tu1" style="float: left; width: 95%;height:98%; border: 1px solid green;"></div>
+    <!--<div id="tu2" style="float: left; width: 45%;height: 98%;border: 1px solid red;"></div>-->
+</div>
+<script>
+    var ydata=['1000','2540','1356','4560','4511','4456','7410','8520','9632','7894','8561','1234'];
+    var xdata=['一月','二月','三月','四月','五月','六月','七月','八月','九月','十月','十一月','十二月'];
+    var ydata1=['1520','1561','4456','8151','1301','1511','8794','4894','5641','1231','2354','4894'];
+    var Max=d3.merge([ydata,ydata1]);
+    function drawLine(divname,xdata,ydata,ydata1){
+    var dataset=d3.zip(xdata,ydata);
+    var dataset1=d3.zip(xdata,ydata1);
+    //1.定义SVG宽度：
+    var svgwidth=$('#'+divname).width();
+    var svgheight=$('#'+divname).height();
+    //2.生成svg
+    var _svg=d3.select("#"+divname)
+            .append("svg")
+            .attr("width",svgwidth)
+            .attr("height",svgheight);
+    //3.定义主区域与四边之间的距离
+    var _margin={top:20,right:30,bottom:40,left:50};
+    //4.定义主区域：
+    var _gdraw1=_svg.append("g")
+            .attr("id","gdraw1")
+            .attr("transform","translate("+_margin.left+","+_margin.top+")");
+    //5.定义标题高度：
+    var titleheight=50;
+    //6.定义核心区域：
+    var _gdraw2=_gdraw1.append("g")
+            .attr("id","gdraw2")
+            .attr("transform","translate(0,"+titleheight+")");
+    //7.定义xy轴与核心区四边距离
+    var _chartmargin={top:20,right:30,bottom:40,left:50};
+    //8.计算出主区域的宽与高
+     var chartwidth=svgwidth-_margin.left-_margin.right;
+    var chartheight=svgheight-_margin.top-_margin.bottom-titleheight;
+    //9.计算出X轴和Y轴的位置：
+    var yaxisheight=chartheight-_chartmargin.top-_chartmargin.bottom;
+    var xaxiswidth=chartwidth-_chartmargin.left-_chartmargin.right;
+    //10.定义存放x轴G组,及存入Y轴G组
+    var gxaxis=_gdraw2.append("g")
+            .attr("id",divname+"gxaxis")
+            .attr("transform","translate(0,"+yaxisheight+")");
+    var gyaxis=_gdraw2.append("g")
+            .attr("id",divname+"gyaxis");
+    //11.定义X轴，生成X轴
+    var _scaleband=d3.scaleBand()
+            .domain(xdata)
+            .range([0,xaxiswidth]);
+    var xaxis=d3.axisBottom()
+            .scale(_scaleband);
+    xaxis(gxaxis);
+    //12.定义Y轴，生成Y轴
+    var _scaleline=d3.scaleLinear()
+            .domain([0,d3.max(Max)])
+            .nice()
+            .range([yaxisheight,0]);
+    var yaxis=d3.axisLeft()
+            .scale(_scaleline);
+    yaxis(gyaxis);
+
+    function drawLct(dataset,ydata){
+    var color=['red','yellow','green','#ccc','blue','black','purple','orange','cyan','pink'];
+    var indexs=parseInt(Math.random()*10);
+    //定义折现
+    var _line=d3.line()
+            .x(function(d,i){
+                return _scaleband(d[0])+_scaleband.bandwidth()/2
+            })
+            .y(function(d,i){
+                return _scaleline(d[1])
+            })
+            .curve(d3.curveCatmullRom);
+    _gdraw2.append('g')
+            .attr('id','line1')
+            .append('path')
+            .attr('d',_line(dataset))
+//            .attr('stroke','red')
+            .attr('stroke',function(d,i){
+                return color[indexs]
+            })
+            .attr('stroke-width',1)
+            .attr('fill','none');
+        //定义散点
+    var _gscatter= _gdraw2.append("g")
+            .attr('id',divname+'gyscatter');
+    var updatacircle=_gscatter.selectAll('circle')
+            .data(dataset);
+    entercircle=updatacircle.enter()
+            .append('circle')
+            .attr('cx',function(d,i){
+                return _scaleband(xdata[i])+_scaleband.bandwidth()/2
+            })
+            .attr('cy',function(d,i){
+                return _scaleline(ydata[i])
+            })
+            .attr('fill',function(d,i){
+                return d3.schemeCategory10[i]
+            })
+            .attr('r',5);
+    //定义文字
+    var _gtext=_gdraw2.append('g')
+                .attr('id','gtext');
+    var updatatext=_gtext.selectAll('text')
+            .data(dataset);
+    updatatext.enter()
+            .append('text')
+            .text(function(d,i){
+                return d[1];
+            })
+            .attr('x',function(d,i){
+                return _scaleband(d[0])+_scaleband.bandwidth()/2+10
+            })
+            .attr('y',function(d,i){
+                return _scaleline(d[1])
+            });
+    }
+    drawLct(dataset,ydata);
+    drawLct(dataset1,ydata1);
+    }
+    drawLine('tu1',xdata,ydata,ydata1)
+</script>
+</body>
+</html>

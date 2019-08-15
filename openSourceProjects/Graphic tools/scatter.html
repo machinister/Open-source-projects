@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title></title>
+    <script src="js/d3.min.js"></script>
+    <script src="js/jquery-3.2.1.min.js"></script>
+</head>
+<style>
+    .prompts {
+        position: absolute;
+        width: 130px;
+        height: auto;
+        font-family: "微软雅黑";
+        color: #FFFFFF;
+        background-color: rgba(0, 0, 0, 0.4);
+        padding: 10px;
+        opacity: 0;
+        text-align: center;
+    }
+
+    svg {
+        overflow: hidden;
+    }
+</style>
+<body>
+<div style="position: absolute; width: 99%; height: 98%;">
+    <div id="tu1" style="float: left; width: 45%;height:98%; border: 1px solid green;"></div>
+    <div id="tu2" style="float: left; width: 45%;height: 98%;border: 1px solid red;"></div>
+</div>
+<script>
+    var dataset = [
+        ['白酒', 175, 1477, 10], ['饼干', 249, 2258, 20], ['炒货', 261, 2329, 30],
+        ['除污类', 230, 2775, 15], ['果酒', 5, 2523, 40], ['护理用品', 204, 1886, 24],
+        ['家用杂品', 255, 2333, 35], ['洁面护肤', 267, 1392, 42], ['进口食品', 164, 1551, 18],
+        ['毛巾', 68, 1655, 42], ['面点类', 35, 2310, 55], ['面类', 11, 1903, 65],
+        ['沐浴', 170, 1893, 25], ['啤酒', 190, 1898, 18], ['其他', 212, 1248, 62],
+        ['肉及水产', 179, 1166, 65], ['食材', 213, 1497, 52], ['食品杂货', 180, 2439, 85],
+        ['蔬菜类', 10, 2389, 45], ['糖果', 28, 1417, 66], ['调料类', 299, 2179, 98],
+        ['文具期刊', 203, 1785, 85], ['洗发', 132, 1545, 44], ['洗衣类', 187, 1850, 85],
+        ['香烟', 234, 1968, 65], ['小五金', 208, 1320, 14], ['休闲小食', 188, 1465, 88],
+        ['牙膏牙刷', 93, 1492, 45], ['饮料', 85, 1943, 36], ['纸质品', 127, 2336, 14]
+    ];
+    var dataset2 = d3.transpose(dataset);
+       console.log(dataset2);
+    var lable = dataset2[0];
+    var xdata = dataset2[1];
+    var ydata = dataset2[2];
+
+    function drawCatter(divname, lable, xdata, ydata) {
+        var _drag = d3.drag()
+            .on('start', function (d, i) {
+            })
+            .on('drag', function (d, i) {
+                d3.select(this)
+                    .attr('transform', 'translate(' + d3.event.x + ',' + d3.event.y + ')')
+            })
+            .on('end', function (d, i) {
+
+            });
+        //1.定义SVG宽度：
+        var svgwidth = $('#' + divname).width();
+        var svgheight = $('#' + divname).height();
+        //2.生成svg
+        var _svg = d3.select('#' + divname)
+            .append("svg")
+            .attr("width", svgwidth)
+            .attr("height", svgheight)
+            .style('overflow', 'hidden');
+        //3.定义主区域与四边之间的距离
+        var _margin = {top: 20, right: 30, bottom: 40, left: 50};
+        //4.定义主区域：
+        var _gdraw1 = _svg.append("g")
+            .attr("id", "gdraw1")
+            .attr("transform", "translate(" + _margin.left + "," + _margin.top + ")");
+        //5.定义标题高度：
+        var titleheight = 50;
+        //6.定义核心区域：
+        var _gdraw2 = _gdraw1.append("g")
+            .attr("id", "gdraw2")
+            .attr("transform", "translate(0," + titleheight + ")");
+        //7.定义xy轴与核心区四边距离
+        var _chartmargin = {top: 20, right: 30, bottom: 40, left: 50};
+        //8.计算出主区域的宽与高
+        var chartwidth = svgwidth - _margin.left - _margin.right;
+        var chartheight = svgheight - _margin.top - _margin.bottom - titleheight;
+        //9.计算出X轴和Y轴的位置：
+        var yaxisheight = chartheight - _chartmargin.top - _chartmargin.bottom;
+        var xaxiswidth = chartwidth - _chartmargin.left - _chartmargin.right;
+        //10.定义存放x轴G组,及存入Y轴G组
+        var gxaxis = _gdraw2.append("g")
+            .attr("id", "gxaxis")
+            .attr("transform", "translate(0," + yaxisheight + ")");
+        var gyaxis = _gdraw2.append("g")
+            .attr("id", divname + "gyaxis");
+        //11.定义X轴，生成X轴
+        var _scaleline2 = d3.scaleLinear()
+            .domain([0, d3.max(xdata)])
+            .nice()
+            .range([0, xaxiswidth]);
+        var xaxis = d3.axisBottom()
+            .scale(_scaleline2);
+        xaxis(gxaxis);
+        //12.定义Y轴，生成Y轴
+        var _scaleline = d3.scaleLinear()
+            .domain([0, d3.max(ydata)])
+            .nice()
+            .range([yaxisheight, 0]);
+        var yaxis = d3.axisLeft()
+            .scale(_scaleline);
+        yaxis(gyaxis);
+        //菱形块
+        var _svgpath = d3.symbol().type(d3.symbolDiamond).size(100);
+        //    y轴方向上的网格线
+        var _gscatter = _gdraw2.append("g")
+            .attr('id', divname + 'gyscatter');
+        gxaxis.selectAll('g')
+            .append('line')
+            .attr('x1', 0)
+            .attr('x2', 0)
+            .attr('y1', 0)
+            .attr('y2', -yaxisheight)
+            .attr('stroke', 'red')
+            .attr('stroke-width', 1);
+        //    x轴方向上的网格线
+        var ticks = _scaleline.ticks(10);
+        var updata1 = gyaxis.selectAll('.line')
+            .data(ticks);
+        enterline = updata1.enter()
+            .append('line')
+            .attr('class', 'line')
+            .attr('x1', 0)
+            .attr('x2', xaxiswidth)
+            .attr('y1', function (d, i) {
+                return _scaleline(d);
+            })
+            .attr('y2', function (d, i) {
+                return _scaleline(d);
+            })
+            .attr('stroke', 'red')
+            .attr('stroke-width', 1);
+        exitline = updata1.exit().remove();
+        //交互事件
+        var _odiv = d3.select('#' + divname)
+            .append('div')
+            .attr('class', 'prompts');
+        var updatapath = _gscatter.selectAll('path')
+            .data(dataset);
+        enterpath = updatapath.enter()
+            .append('path')
+            .attr('d', function (d, i) {
+                if (xdata[i] < 150) {
+                    return _svgpath();
+                } else {
+                    return d3.symbol().type(d3.symbolCircle).size(100)();
+                }
+            })
+            .attr('transform', function (d, i) {
+                return 'translate(' + _scaleline2(xdata[i]) + ',' + _scaleline(ydata[i]) + ')'
+            })
+            .attr('fill', function (d, i) {
+                return d3.schemeCategory10[i]
+            })
+            .call(_drag)
+            .on("mouseover", function (d, i) {
+//                    console.log(d)
+                var xyposition = d3.mouse(this);
+                console.log(xyposition);
+                var _tooptipx = d3.event.pageX;
+                var _tooptipy = d3.event.pageY;
+//                    console.log( xyposition);
+                console.log(svgwidth);
+                console.log(_tooptipx);
+                if ((xaxiswidth - xyposition[0]) <= 130) {
+                    _tooptipx = _tooptipx - 130;
+                    console.log(_tooptipx);
+                }
+//                    if((svgheight-_promptsy[1])<100){
+//                        _promptsy=_promptsy-100
+//                    }
+                _odiv.style("left", _tooptipx + 'px')
+                    .style("top", _tooptipy + 'px')
+                    .style("opacity", 1)
+                    .html("商品名：" + d[0])
+            })
+            .on("mouseout", function (d, i) {
+                _odiv.style("opacity", 0)
+            });
+        //    var _gtext= _gdraw2.append("g");
+        //    _gtext.selectAll('text')
+        //            .data(lable)
+        //            .enter()
+        //            .append('text')
+        //            .text(function(d,i){
+        //                return d
+        //            })
+        //            .attr('x',function(d,i){
+        //                return _scaleline2(xdata[i])
+        //            })
+        //            .attr('y',function(d,i){
+        //                return _scaleline(ydata[i])
+        //            });
+    }
+
+    drawCatter('tu1', lable, xdata, ydata);
+    drawCatter('tu2', lable, xdata, ydata);
+</script>
+</body>
+</html>

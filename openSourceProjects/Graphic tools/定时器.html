@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title></title>
+    <script src="js/d3.min.js"></script>
+</head>
+<body>
+
+</body>
+</html>
+<script>
+    function gettime(){
+       var dt=new Date();
+       var year=dt.getFullYear()+'年';
+       var mon=dt.getMonth()+1+'月';
+       var day=dt.getDate()+'日';
+       var hours=dt.getHours()+'小时';
+       var min=dt.getMinutes()+'分';
+       var sec=dt.getSeconds()+'秒';
+       return year+mon+day+hours+min+sec;
+    }
+    console.log(gettime());
+    var _svg=d3.selectAll('body')
+            .append('svg')
+            .attr('width',800)
+            .attr('height',500);
+    var _text=_svg.append('text')
+            .attr('x',100)
+            .attr('y',100)
+            .attr('fill','green');
+    var text=_text.text(gettime());
+    function updata(){
+        _text.text(gettime())
+    }
+    d3.interval(updata,1000);
+</script>

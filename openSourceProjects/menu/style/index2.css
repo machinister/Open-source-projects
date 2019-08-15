@@ -1,0 +1,230 @@
+*{
+    margin: 0;
+    padding: 0;
+}
+li{
+    list-style: none;
+}
+a{
+    text-decoration: none;
+    color:black;
+    font-size: 16px;
+}
+a:hover{
+    text-decoration:none;
+    color:black;
+}
+/*去除mobile底端的loading*/
+.ui-loader-default{ display:none}
+.ui-mobile-viewport{ border:none;}
+.ui-page {padding: 0; margin: 0; outline: 0}
+/*body{*/
+    /*min-width: 320px;*/
+/*}*/
+.c-touch{
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 9999;
+    width: 100%;
+    height: 100vh;
+    background: #fff;
+    opacity: 0.1;
+}
+section:not(.footer) p{
+    /*text-indent: 2em;*/
+    font-size:15px;
+    line-height:28px;
+    text-align:justify;
+    text-justify:inter-ideograph
+}
+h4{
+    font-size: 18px;
+}
+img{
+    width: 100%;
+    /*margin-bottom: 42px;*/
+}
+section .titleImg{
+    margin-bottom: 60px;
+}
+section .main{
+    padding-top: 15px;
+    padding-bottom: 10px;
+}
+section>div{
+    padding-left: 40px;
+    padding-right: 40px;
+}
+section .menuline{
+    border-top: 1px solid #000;
+    color:transparent;
+}
+section .td{
+    padding-top: 20px
+}
+section .linetusy{
+    text-align: left;
+    display: block;
+    font-size: 10px;
+    padding-left: 15px;
+    color:#727171;
+    margin-right: 10px;
+    margin-top: 10px;
+    margin-bottom: 40px;
+}
+section .box{
+    display:flex;
+    justify-content:center;
+}
+section .tusay{
+    display: block;
+    margin-top: 10px;
+    line-height: 14px;
+    font-size: 12px;
+    color: #727171;
+    margin-bottom: 45px;
+    text-align: center;
+}
+section .jiao{
+    margin-top: 15px;
+    width: 11px;
+    height: 10px;
+}
+section .Static{
+    margin-top: 60px;
+}
+section h4{
+    margin-top:20px;
+    margin-bottom: 20px;
+    font-size: 20px;
+}
+table img{
+    margin-bottom:0px;
+}
+.content {
+    margin: 0 auto;
+    /*padding: 26px;*/
+}
+.content .item {
+    padding: 45px;
+    padding-top: 20px;
+}
+.content .item h2 {
+    font-size: 24px;
+    font-weight: bold;
+    line-height: 40px;
+}
+/*----------------------------------*/
+#center{
+    padding-right: 0;
+    display:flex;
+    justify-content:center;
+    z-index: 100000;
+    width: 100vw;
+    background: rgba(0, 0, 0, 0.85);
+}
+#center>#kuang{
+    /*position: fixed;*/
+    /*top:0px;*/
+    /*left:0;*/
+    z-index: 100000;
+    /*background: white;*/
+    /*border-radius: 0 0 10px 10px;*/
+    height:100vh;
+    /*overflow: hidden;*/
+    /*display:flex;*/
+    /*justify-content:center;*/
+    width: 20vw;
+}
+#center>#kuang .btnone{
+    display: inline-block;
+    /*border-right: 3px solid black;*/
+    padding-right: 20px;
+    padding-left: 10px;
+    margin-bottom: 10px;
+}
+ul{
+    margin: 0;
+}
+#center .li{
+    transform: rotate(90deg);
+    /*Writing-mode:tb-rl;*/
+    margin-top: 17px;
+    margin-bottom:-4px;
+    margin-left:2px;
+}
+#center .circle{
+    margin-left: 10px;
+}
+.cne{
+    font-size: 18px;
+    position: relative;
+}
+.img{
+    width: 42px;
+    height: 30px;
+    opacity: 0;
+    padding: 2px 2px 2px 3.5px;
+}
+li>span{
+    position: absolute;
+    left: 12px;
+    top:5px
+}
+.footer span,.footer p{
+    font-size: 13px;
+    color: rgb(123,123,123);
+}
+.footer .left{
+    color:rgb(70,70,70);
+}
+.footer .wq-foot{
+    padding: 40px;
+}
+.footbtn{
+    display:flex;
+    justify-content:center;
+    width:100%;
+}
+svg{
+    display:block;
+}
+/*----------------------------------*/
+
+/*-------����IE6������--------------*/
+* html, * html body {
+    background-image: url(about:blank);
+    background-attachment: fixed;
+}
+
+body.loading {
+    overflow: hidden;
+    width: 100vw;
+    height: 100vh;
+}
+body.loading #pageone {
+    height: 100vh;
+    overflow: hidden;
+}
+
+body > .loading {
+    position: absolute;
+    z-index: 10000000;
+    left: 0;
+    top: 0;
+    right: 0;
+    background: #000;
+    bottom: 0;
+    display: none;
+}
+body.loading > .loading {
+   display: block;
+}
+
+#loading{
+    width:100%;
+    color:rgba(255,255,255,.5);
+    position: absolute;
+    top: 50%;
+}

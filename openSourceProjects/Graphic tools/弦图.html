@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title></title>
+    <script src="js/d3.min.js"></script>
+</head>
+<body>
+
+</body>
+</html>
+<script>
+    var label=["北京","上海","广州"];
+    var dataset=[
+        [2000,1000,750],
+        [3000,5000,4000],
+        [750,6000,3000]
+    ];
+    var _chord=d3.chord()
+            .padAngle(0.01);
+    var _chorddata=_chord(dataset);
+//    console.log(_chorddata);
+    var _outerchord=_chorddata.groups;
+    var _arc=d3.arc()
+            .innerRadius(300-40)
+            .outerRadius(300);
+    var _svg=d3.select('body')
+            .append('svg')
+            .attr('width',600)
+            .attr('height',600);
+    var _g=_svg.append('g')
+            .attr('transform','translate(300,300)');
+    _g.selectAll('.outchord')
+            .data(_outerchord)
+            .enter()
+            .append('path')
+            .attr('class','outchord')
+            .attr('d',function(d,i){
+                return _arc(d)
+            })
+            .attr('fill',function(d,i){
+                return d3.schemeCategory10[i]
+            });
+    _g.selectAll('.outtext')
+            .data(_outerchord)
+            .enter()
+            .append('text')
+            .attr('class','outtext')
+            .attr('x',function(d,i){
+                return _arc.centroid(d)[0];
+            })
+            .attr('y',function(d,i){
+                return _arc.centroid(d)[1];
+            })
+            .text(function(d,i){
+                return label[i];
+            })
+            .attr('text-anchor','middle');
+
+    var _ribbon=d3.ribbon()
+            .radius(300-40);
+    var _ginner=_g.selectAll('.ginner')
+            .data(_chorddata)
+            .enter()
+            .append('g')
+            .attr('class','ginner');
+    _ginner.append('path')
+            .attr('class','innerchord')
+            .attr('d',_ribbon)
+            .attr('fill',function(d,i){
+                return d3.schemeCategory10[i]
+            });
+    _ginner.append('title')
+            .text(function(d,i){
+                console.log(d);
+                var _source= d.source;
+                var _sourcetext=label[_source.subindex]+'->'+label[_source.index]+':'+_source.value;
+                var _target= d.target;
+                var _targettext=label[_target.subindex]+'->'+label[_target.index]+':'+_target.value;
+                return _sourcetext+'\n'+_targettext;
+            })
+</script>

@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title></title>
+    <script src="js/d3.min.js"></script>
+</head>
+<body>
+<script>
+    var _svg=d3.select('body')
+            .append('svg')
+            .attr('width',500)
+            .attr('height',500)
+            .style('background','red')
+    var _line=d3.path();
+    _line.moveTo(20,30);
+    _line.lineTo(100,80)
+    _svg.append('path')
+            .attr('d',_line.toString())
+            .attr('stroke-width',2)
+            .attr('stroke','green')
+    var _line1=d3.path();
+    _line1.moveTo(20,30);
+ /*   _line1.bezierCurveTo(400,70,463,87,200,40)*/
+    _line1.quadraticCurveTo(400,70,200,40)
+    _svg.append('path')
+            .attr('d',_line1.toString())
+            .attr('stroke-width',2)
+            .attr('stroke','green')
+            .attr('fill','none')
+</script>
+</body>
+</html>

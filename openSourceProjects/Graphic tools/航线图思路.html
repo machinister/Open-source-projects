@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title></title>
+    <script src="js/d3.min.js"></script>
+</head>
+<body>
+<script>
+    var _svg=d3.select("body")
+            .append("svg")
+            .attr("width",600)
+            .attr("height",600)
+            .style("background-color","gray");
+    _svg.append("path")
+            .attr("id","mypath")
+            .attr("d","M10 110 A120,120 -45 0,1 110,10 A120,120 -45 0,1 10,110")
+            .attr("stroke","red")
+            .attr("stroke-width",1)
+            .attr("fill","none");
+    _svg.append("circle")
+            .attr("r",3)
+            .attr("fill","green")
+            .append("animateMotion")
+            .attr("repeatCount","indefinite")
+            .attr("dur","6s")
+            .append("mpath")
+            .attr("xlink:href","#mypath")
+</script>
+</body>
+</html>

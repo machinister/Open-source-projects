@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title></title>
+    <script src="js/d3.min.js"></script>
+    <script src="js/jquery-3.2.1.min.js"></script>
+    <style>
+        circle{
+            fill:rgba(31,119,180,0.25);
+            stroke: rgb(31,119,180);
+            stroke-width:1px;
+        }
+        .leaf{
+            fill:#ff7f0e;
+        }
+    </style>
+</head>
+<body>
+    <div style="position: absolute; width: 99%; height: 98%;">
+        <div id="tu1" style="float: left; width: 45%;height:98%; border: 1px solid green;"></div>
+        <div id="tu2" style="float: left; width: 45%;height: 98%;border: 1px solid red;"></div>
+    </div>
+</body>
+</html>
+<script>
+    var dataset={
+        name:'家用电器',
+        children:[
+            {   name:'电视机',
+                children:[
+                    {name:'曲面电视',price:100},
+                    {name:'超薄电视',price:80},
+                    {name:'电视配件',price:30}
+                ]
+            },
+            {   name:'空调机',
+                children:[
+                    {name:'挂式空调',price:200},
+                    {name:'立式空调',price:150}
+                ]
+            }
+        ]
+    };
+    function drawPackup(divname,dataset){
+        var svgwidth=$('#'+divname).width();
+        var svgheight=$('#'+divname).height();
+        var _root=d3.hierarchy(dataset)
+                .sum(function(d,i){
+                    return d.price
+                });
+        var _pack=d3.pack()
+                .size([svgwidth,svgheight])
+                .padding(10);
+        var _packdata=_pack(_root);
+        var _allnodes=_packdata.descendants();
+        var _svg=d3.select('#'+divname)
+                .append('svg')
+                .attr('width',svgwidth)
+                .attr('height',svgheight);
+        var _gcircle=_svg.selectAll('g')
+                .data(_allnodes)
+                .enter()
+                .append('g')
+                .attr('class','gcircle')
+                .attr('transform',function(d,i){
+                    return 'translate('+d.x+','+ d.y+')'
+                });
+        _gcircle.append('circle')
+                .attr('cx',0)
+                .attr('cy',0)
+                .attr('r',function(d,i){
+                    return d.r
+                })
+                .attr("class",function(d){
+                    return d.height==0?'leaf':'';
+                });
+        _gcircle.append('text')
+                .attr('cx',0)
+                .attr('cy',0)
+                .text(function(d,i){
+                    return d.children?"":d.data.name;
+                    //return d.height==0?d.data.name:"";
+                })
+                .attr("text-anchor","middle")
+                .style('fill','white');
+        _gcircle.append('title')
+                .text(function(d,i){
+                    return '商品名称'+d.data.name+'\n'+'价格：'+d.data.price
+                });
+    }
+    drawPackup('tu1',dataset)
+</script>

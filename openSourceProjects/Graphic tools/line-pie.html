@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script src="js/d3.min.js"></script>
+    <script src="js/jquery-3.2.1.min.js"></script>
+    <style>
+        #wq-upLeft {
+            width: 50%;
+            height: 800px;
+            background: rgb(10, 16, 42);
+        }
+    </style>
+</head>
+<body>
+<div id="wq-upLeft"></div>
+</body>
+</html>
+<script>
+    // 饼图数据
+    var pieDataset = [
+        {'name': '机器人', 'value': 92},
+        {'name': '计算机视觉', 'value': 96},
+        {'name': '自然语言处理', 'value': 77},
+        {'name': '深度学习', 'value': 26},
+        {'name': '智能驾驶', 'value': 35}
+    ];
+    var drawPie = function (divname, dataset) {
+        pieFlag = 0;
+
+        function wwwa() {
+            pieFlag = 1;
+        }
+
+        setTimeout(wwwa, 5000);
+
+        var _svgwidth = $("#" + divname).width();
+        var _svgheight = $("#" + divname).height();
+        dataset.sort(function (a, b) {
+            return d3.ascending(a.value, b.value)
+        });
+        var _pie = d3.pie()
+        // .padAngle(Math.PI * 0.005)
+            .sort(null)
+            .value(function (d, i) {
+                return d.value;
+            });
+        var _arcdata = _pie(dataset);
+        var _arc = d3.arc()
+            .innerRadius(0)
+            .outerRadius(100);
+        var _svg = d3.select("#" + divname)
+            .append("svg")
+            .attr("width", _svgwidth)
+            .attr("height", _svgheight);
+
+
+        // 定义画饼及饼外线文字的g组
+        var _gpie1 = _svg.append("g")
+            .attr("id", divname + "_gpie1");
+        var _gpie = _svg.append("g")
+            .attr("id", divname + "_gpie");
+
+
+        // 画饼图外线及文字
+        var textLine = function () {
+            //园内外延线
+            _gpie1.selectAll("line")
+                .data(_arcdata)
+                .enter()
+                .append("line")
+                .attr("transform", "translate(" + _svgwidth / 2 + "," + _svgheight / 2 + ")")
+                .attr("x1", function (d) {
+                    var deviation = _arc.centroid(d);
+                    var deviationx = deviation[0];
+                    return deviationx * 0.8;
+                })
+                .attr("y1", function (d) {
+                    var deviation = _arc.centroid(d);
+                    var deviationy = deviation[1];
+                    return deviationy * 0.8;
+                })
+                .attr("x2", function (d) {
+                    var deviation = _arc.centroid(d);
+                    var deviationx = deviation[0];
+                    return deviationx * 2.5;
+                })
+                .attr("y2", function (d) {
+                    var deviation = _arc.centroid(d);
+                    var deviationy = deviation[1];
+                    return deviationy * 2.5;
+                })
+                .attr("stroke", "red");
+
+
+            //横线
+            var _gpie2 = _svg.append("g")
+                .attr("id", divname + "_gpie2");
+            _gpie2.selectAll("line")
+                .data(_arcdata)
+                .enter()
+                .append("line")
+                .attr("transform", "translate(" + _svgwidth / 2 + "," + _svgheight / 2 + ")")
+                .attr("x1", function (d) {
+                    var deviation = _arc.centroid(d);
+                    var deviationx = deviation[0];
+                    return deviationx * 2.5;
+                })
+                .attr("y1", function (d) {
+                    var deviation = _arc.centroid(d);
+                    var deviationy = deviation[1];
+                    return deviationy * 2.5;
+                })
+                .attr("x2", function (d) {
+                    var deviation = _arc.centroid(d);
+                    var deviationx = deviation[0];
+                    if (deviationx > 0) {
+                        return (deviationx * 2.5) + 40;
+                    } else {
+                        return (deviationx * 2.5) - 40;
+                    }
+
+                })
+                .attr("y2", function (d) {
+                    var deviation = _arc.centroid(d);
+                    var deviationy = deviation[1];
+                    return deviationy * 2.5;
+                })
+                .attr("stroke", "red");
+
+
+            //饼外的文字
+            _gpie1.selectAll("text")
+                .data(_arcdata)
+                .enter()
+                .append("text")
+                .attr("transform", "translate(" + _svgwidth / 2 + "," + (_svgheight / 2 + 4) + ")")
+                .attr("x", function (d) {
+                    var deviation = _arc.centroid(d);
+                    var deviationx = deviation[0];
+                    var _xtext = deviationx * 3.0;
+                    if (deviationx >= -20 && deviationx <= 20) {
+                        if (deviationx >= -20 && deviationx <= 0) {
+                            return (_xtext - 10);
+                        } else {
+                            return (_xtext + 10);
+                        }
+                    } else {
+                        return _xtext;
+                    }
+                })
+                .attr("y", function (d) {
+                    var deviation = _arc.centroid(d);
+                    var deviationy = deviation[1];
+                    var _ytext = deviationy * 2.9;
+                    if (deviationy >= 40 || deviationy <= -40) {
+                        if (deviationy >= 40) {
+                            return (_ytext - 8);
+                        } else {
+                            return (_ytext + 10);
+                        }
+                    } else {
+                        return _ytext;
+                    }
+
+                })
+                .attr("text-anchor", "middle")
+                .text(function (d) {
+                    return d.data.name
+                })
+                .attr("fill", "red");
+
+
+            //饼图内部文字
+            _gpie.selectAll("text")
+                .data(_arcdata)
+                .enter()
+                .append("text")
+                .attr("transform", "translate(" + (_svgwidth / 2 - 20) + "," + _svgheight / 2 + ")")
+                .attr('x', function (d, i) {
+                    return _arc.centroid(d)[0] * 1.1
+                })
+                .attr('y', function (d, i) {
+                    return _arc.centroid(d)[1] * 1.1
+                })
+                .text(function (d, i) {
+                    return d.data.value;
+                })
+                .attr("cursor", "pointer")
+                .attr('fill', 'rgb(10,16,42)')
+                .on('mouseover', function (d, i) {
+                    if (pieFlag == 1) {
+                        var deviation = _arc.centroid(d);
+                        var deviationx = deviation[0] / 4;
+                        var deviationy = deviation[1] / 4;
+                        d3.select(this)
+                            .transition()
+                            .duration(function (d, i) {
+                                return 400;
+                            })
+                            .attr("transform", "translate(" + (_svgwidth / 2 - 20 + deviationx) + "," + (_svgheight / 2 + deviationy) + ")");
+                        _gpie.selectAll('#' + d.data.name)
+                            .transition()
+                            .duration(function (d, i) {
+                                return 400;
+                            })
+                            .attr("transform", "translate(" + (_svgwidth / 2 + deviationx) + "," + (_svgheight / 2 + deviationy) + ")");
+                    }
+                })
+                .on('mouseout', function (d, i) {
+                    if (pieFlag == 1) {
+                        d3.select(this)
+                            .transition()
+                            .duration(function (d, i) {
+                                return 400;
+                            })
+                            .attr("transform", "translate(" + (_svgwidth / 2 - 20) + "," + _svgheight / 2 + ")")
+                        _gpie.selectAll('#' + d.data.name)
+                            .transition()
+                            .duration(function (d, i) {
+                                return 400;
+                            })
+                            .attr("transform", "translate(" + _svgwidth / 2 + "," + _svgheight / 2 + ")");
+                    }
+                })
+                .attr('class', function (d, i) {
+                    return d.data.name
+                });
+        };
+
+
+        // 画饼
+        var _totalduration = 0;
+        _gpie.selectAll("path")
+            .data(_arcdata)
+            .enter()
+            .append("path")
+            .attr("transform", "translate(" + _svgwidth / 2 + "," + _svgheight / 2 + ")")
+            .attr("fill", function (d, i) {
+                return d3.schemeCategory10[i];
+            })
+            .attr("cursor", "pointer")
+            .on('mouseover', function (d, i) {
+                if (pieFlag == 1) {
+                    var deviation = _arc.centroid(d);
+                    var deviationx = deviation[0] / 4;
+                    var deviationy = deviation[1] / 4;
+                    d3.select(this)
+                        .transition()
+                        .duration(function (d, i) {
+                            return 400;
+                        })
+                        .attr("transform", "translate(" + (_svgwidth / 2 + deviationx) + "," + (_svgheight / 2 + deviationy) + ")");
+                    _gpie.selectAll('.' + d.data.name)
+                        .transition()
+                        .duration(function (d, i) {
+                            return 400;
+                        })
+                        .attr("transform", "translate(" + (_svgwidth / 2 - 20 + deviationx) + "," + (_svgheight / 2 + deviationy) + ")");
+                }
+            })
+            .on('mouseout', function (d, i) {
+                if (pieFlag == 1) {
+                    d3.select(this)
+                        .transition()
+                        .duration(function (d, i) {
+                            return 400;
+                        })
+                        .attr("transform", "translate(" + _svgwidth / 2 + "," + _svgheight / 2 + ")");
+                    _gpie.selectAll('.' + d.data.name)
+                        .transition()
+                        .duration(function (d, i) {
+                            return 400;
+                        })
+                        .attr("transform", "translate(" + (_svgwidth / 2 - 20) + "," + _svgheight / 2 + ")")
+                }
+            })
+            .each(function (d, i) {
+                d.duration = (d.endAngle - d.startAngle) / (2 * Math.PI) * 10;
+                d.delay = _totalduration;
+                _totalduration = _totalduration + d.duration;
+            })
+            .transition()
+            .duration(function (d, i) {
+                return d.duration * 500
+            })
+            .delay(function (d) {
+                return d.delay * 500
+            })
+            .ease(d3.easeLinear)
+            .tween("path", function (d, i) {
+                var _this = this;
+                var initEndAngle = d.endAngle;
+                return function (t) {
+                    d.endAngle = d.startAngle + t * (initEndAngle - d.startAngle);
+                    d3.select(_this)
+                        .attr("d", _arc(d))
+                }
+            })
+            .call(function () {
+                setTimeout(textLine, 5000)
+            })
+            .attr('id', function (d, i) {
+                return d.data.name
+            });
+    };
+    drawPie("wq-upLeft", pieDataset);
+</script>

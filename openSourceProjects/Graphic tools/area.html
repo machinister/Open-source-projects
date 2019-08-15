@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title></title>
+    <script src="js/d3.min.js"></script>
+    <script src="js/jquery-3.2.1.min.js"></script>
+</head>
+
+<body>
+<div style="position: absolute; width: 99%; height: 98%;">
+    <div id="tu1" style="float: left; width: 45%;height:98%; border: 1px solid green;"></div>
+    <div id="tu2" style="float: left; width: 45%;height: 98%;border: 1px solid red;"></div>
+</div>
+<script>
+    //定义数据：
+    var xdata = ['20170501',   '20170502',    '20170503',    '20170504',    '20170505',    '20170506',    '20170507',    '20170508',    '20170509',    '20170510',    '20170511',    '20170512',    '20170513',    '20170514',    '20170515',    '20170516',    '20170517',    '20170518',    '20170519',    '20170520',    '20170521',    '20170522',    '20170523',    '20170524',    '20170525',    '20170526',    '20170527',    '20170528',    '20170529',    '20170530',    '20170531'];var ydata = [333,  791,   499,   395,   435,   463,   330,   230,   659,   795,   578,   482,   288,   443,   388,   497,   500,   162,   162,   770,   123,   579,   428,   571,   389,   692,   658,   604,   489,   691,   635];
+    var ydata = [333,  791,   499,   395,   435,   463,   330,   230,   659,   795,   578,   482,   288,   443,   388,   497,   500,   162,   162,   770,   123,   579,   428,   571,   389,   692,   658,   604,   489,   691,   635];
+    var ydata1 = [1333,    1791,  2499,  1395,  1435,  1463,  330,   1230,  659,   1795,  1578,  1482,  1288,  1443,  2388,  1497,  1500,  1162,  1162,  1770,  2123,  1579,  1428,  571,   389,   1692,  2658,  1604,  2489,  2691,  2635];
+    var dataset8=d3.merge([ydata,ydata1]);
+    //1.定义SVG宽度：
+    function drawArea(divname,xdata,ydata,ydata1){
+        var dataset8=d3.merge([ydata,ydata1]);
+        var svgwidth=$('#'+divname).width();
+        var svgheight=$('#'+divname).height();
+        //2.生成svg
+        var _svg=d3.select("#"+divname)
+                .append("svg")
+                .attr("width",svgwidth)
+                .attr("height",svgheight);
+        //3.定义主区域与四边之间的距离
+        var _margin={top:20,right:30,bottom:40,left:50};
+        //4.定义主区域：
+        var _gdraw1=_svg.append("g")
+                .attr("id","gdraw1")
+                .attr("transform","translate("+_margin.left+","+_margin.top+")");
+        //5.定义标题高度：
+        var titleheight=50;
+        //6.定义核心区域：
+        var _gdraw2=_gdraw1.append("g")
+                .attr("id","gdraw2")
+                .attr("transform","translate(0,"+titleheight+")");
+        //7.定义xy轴与核心区四边距离
+        var _chartmargin={top:20,right:30,bottom:40,left:50};
+        //8.计算出主区域的宽与高
+         var chartwidth=svgwidth-_margin.left-_margin.right;
+        var chartheight=svgheight-_margin.top-_margin.bottom-titleheight;
+        //9.计算出X轴和Y轴的位置：
+        var yaxisheight=chartheight-_chartmargin.top-_chartmargin.bottom;
+        var xaxiswidth=chartwidth-_chartmargin.left-_chartmargin.right;
+        //10.定义存放x轴G组,及存入Y轴G组
+        var gxaxis=_gdraw2.append("g")
+                .attr("id","gxaxis")
+                .attr("transform","translate(0,"+yaxisheight+")");
+        var gyaxis=_gdraw2.append("g")
+                .attr("id","gyaxis");
+        //11.定义X轴，生成X轴
+        var _scaleband=d3.scaleBand()
+                .domain(xdata)
+                .range([0,xaxiswidth]);
+        var xaxis=d3.axisBottom()
+                .scale(_scaleband);
+        xaxis(gxaxis);
+        //12.定义Y轴，生成Y轴
+        var _scaleline=d3.scaleLinear()
+                .domain([0,d3.max(dataset8)])
+                .range([yaxisheight,0]);
+        var yaxis=d3.axisLeft()
+                .scale(_scaleline);
+        yaxis(gyaxis);
+        //以下为创建折线图：
+        //1.第一个折线
+        var dataset2=d3.zip(ydata,ydata1,xdata);
+//        console.log(dataset2);
+        //2.定义线段生成器
+        var _area=d3.area()
+                .x(function(d,i){
+                   return _scaleband(d[2])+_scaleband.bandwidth()/2;
+               })
+                .y1(function(d,i){
+                    return _scaleline(d[1]) //返回yaxisheight这不会有y1的高度
+                })
+                .y0(function(d,i){
+                    return _scaleline(d[0])
+                })
+                .curve(d3.curveNatural);
+        _gdraw2.append("g")
+                .append("path")
+                .attr("d",_area(dataset2))
+                .attr("stroke","green")
+                .attr("stroke_width",1)
+                .attr("fill","blue");
+        //3添加标记点：(小红圈)
+        _gdraw2.append("g")
+                .selectAll("circle")
+                .data(dataset2)
+                .enter()
+                .append("circle")
+                .attr("cx",function(d,i){
+                    return _scaleband(d[2])+_scaleband.bandwidth()/2;
+                })
+                .attr("cy",function(d,i){
+                    return _scaleline(d[1])
+                })
+                .attr("r",5)
+                .attr("fill","red");
+    }
+    drawArea('tu1',xdata,ydata,ydata1)
+</script>
+</body>
+</html>

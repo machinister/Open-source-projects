@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title></title>
+    <script src="js/d3.min.js"></script>
+</head>
+<body>
+
+</body>
+</html>
+<script>
+    var internumber=d3.interpolateNumber(0,3000);//a=0 b=3000
+    console.log(internumber(0.2));//(1-0.2)*a+0.2*b
+    console.log(internumber(0.0759));
+    var interround=d3.interpolateRound(0,3000);
+    console.log(interround(0.0759));
+    var interstring=d3.interpolateString('2px','20px');
+    console.log(interstring(0.2));
+    var compDate=d3.interpolateDate(new Date('2017,9,5'),new Date('2017,10,5'));
+    console.log(compDate(0.2).getTime());
+    console.log(compDate(0.4).getTime());
+    var a=[10,60,100];
+    var b=[100,300,60];
+    var  interArr=d3.interpolateArray(a,b);
+    console.log(interArr(0.4));
+    console.log(interArr(0.6));
+    var intercolor=d3.interpolateRgb('rgb(0,0,0)','rgb(255,255,255)');
+    console.log(intercolor(0.4));
+    console.log(intercolor(0.5));
+    var aa={'name':'白酒','age':'18'};
+    var bb={'name':'鸡蛋','age':'25'};
+    var interobj=d3.interpolateObject(aa,bb);
+    console.log(interobj(0));
+    console.log(interobj(1));
+    console.log(interobj(0.2));
+    console.log(interobj(0.4));
+    console.log(interobj(0.8));
+</script>

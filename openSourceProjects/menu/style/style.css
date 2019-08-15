@@ -1,0 +1,28 @@
+@media all{
+  #elevation .axis.yElevation path.domain{
+        stroke-width:0;
+  }
+
+  #elevation .axis.yElevation .tick line{
+        stroke:lightgrey;
+  }
+
+  h3.no_margin_bottom{
+  	margin-bottom: 0px;
+  }
+
+}
+
+@media all and (max-width: 420px) {
+  
+
+}
+
+@media all and (min-width: 426px) and (max-width: 768px) {
+  
+}
+
+@media all and (min-width: 769px) {
+  
+
+}

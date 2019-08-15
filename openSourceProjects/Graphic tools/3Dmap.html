@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script src="js/d3.min.js"></script>
+    <script src="js/jquery-3.2.1.min.js"></script>
+    <style>
+        #wq-upOne {
+            width: 50%;
+            height: 800px;
+            background: rgb(10, 16, 42);
+            position: relative;
+            padding-right: 8px;
+        }
+
+        #wq-upOne > svg {
+            position: absolute;
+        }
+
+        #wq-upOne > #svg-0 {
+            z-index: 1000;
+            left: 3px;
+            top: -5px;
+        }
+    </style>
+</head>
+<body>
+<div id="wq-upOne"></div>
+</body>
+</html>
+<script>
+    var china_geo = "./js/111china.json"; // geojson from Jiachuan, can use either of it
+    // get data from url
+    d3.queue()
+            .defer(d3.json, china_geo)// 使用以工程文件夹为根目录的绝对路径
+            .await(cmap);
+
+
+    // 地图相关函数
+    function cmap(error, china_geo) {
+        var _svgwidth = $("#wq-upOne").width();
+        var _svgheight = $("#wq-upOne").height();
+
+        // 地图映射函数
+        var _projection = d3.geoMercator()
+                .center([108.9404296875, 34.252676117101515])
+                .scale("500")
+                .fitExtent([[0, 0], [_svgwidth, _svgheight]], china_geo);
+        var _geopath = d3.geoPath()
+                .projection(_projection);
+
+        // 绘制svg
+        var _svg = d3.select("#wq-upOne")
+                .append("svg")
+                .attr("id", "svg-0")
+                .attr("width", _svgwidth)
+                .attr("height", _svgheight);
+
+        // 绘制地图
+        _svg.selectAll("path")
+                .data(china_geo.features)
+                .enter()
+                .append("path")
+                .attr("d", function (d, i) {
+                    return _geopath(d)
+                })
+                .attr("stroke", "rgba(255,255,255,0.1")
+                .attr("stroke-width", 1)
+                .attr("fill", "gray")
+                .attr("id", function (d) {
+                    return d.properties.name;
+                })
+                .attr("cursor", "pointer")
+                .on("click", function (d) {
+                    // 点击事件变色
+                    if ($(this).attr("fill") == "gray") {
+                        d3.select(this.parentNode)
+                                .selectAll("path")
+                                .attr("fill", "gray");
+                        $(this).attr("fill", "red")
+                    } else {
+                        d3.select(this.parentNode)
+                                .selectAll("path")
+                                .attr("fill", "gray");
+                    }
+                });
+
+
+        // 循环克隆堆叠形成立体
+        var sourceNode = document.getElementById("svg-0"); // 获得被克隆的节点对象
+        for (var i = 1; i < 10; i++) {
+            var clonedNode = sourceNode.cloneNode(true); // 克隆节点
+            clonedNode.setAttribute("id", "_svg-" + i); // 修改一下id 值，避免id 重复
+            sourceNode.parentNode.appendChild(clonedNode); // 在父节点插入克隆的节点
+            // console.log(clonedNode);
+            $("#_svg-" + i).css({
+                top: -i / 2 + "px",
+                left: -i / 2 + 8 + "px"
+            });
+        }
+
+
+        //优化加载在最上层svg添加text
+        d3.select("#wq-upOne")
+                .select("#svg-0")
+                .selectAll("text")
+                .data(china_geo.features)
+                .enter()
+                .append("text")
+                .attr("x", function (d, i) {
+                    var xypoint = _geopath.centroid(d);
+                    return xypoint[0]
+                })
+                .attr("y", function (d, i) {
+                    var xypoint = _geopath.centroid(d);
+                    return xypoint[1]
+                })
+                .attr('text-anchor', 'middle')
+                .text(function (d, i) {
+                    return d.properties.name;
+                })
+                .attr('font-size', 10)
+                .attr("cursor", "pointer")
+                .attr("fill", "yellow")
+                .on("click", function (d) {
+                    var _name = d.properties.name;
+                    // 点击事件变色
+                    d3.select("#wq-upOne")
+                            .select("#svg-0")
+                            .selectAll("path")
+                            .attr("fill", "gray");
+                    d3.select("#wq-upOne")
+                            .select("#svg-0")
+                            .selectAll("#" + _name)
+                            .attr("fill", "red");
+                });
+    }
+</script>

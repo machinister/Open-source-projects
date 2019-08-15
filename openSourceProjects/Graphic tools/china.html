@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title></title>
+    <script src="js/d3.min.js"></script>
+    <script src="js/jquery-3.2.1.min.js"></script>
+</head>
+<body>
+
+</body>
+</html>
+<script>
+    var dataset=[
+        {name:'安徽',value:421},
+        {name:'安徽',value:421},
+        {name:'北京',value:517},
+        {name:'重庆',value:217},
+        {name:'福建',value:214},
+        {name:'广东',value:338},
+        {name:'甘肃',value:849},
+        {name:'广西',value:285},
+        {name:'贵州',value:582},
+        {name:'河北',value:375},
+        {name:'黑龙江',value:888},
+        {name:'河南',value:792},
+        {name:'海南',value:615},
+        {name:'湖北',value:943},
+        {name:'湖南',value:969},
+        {name:'江苏',value:255},
+        {name:'江西',value:593},
+        {name:'吉林',value:593},
+        {name:'辽宁',value:392},
+        {name:'内蒙古',value:307},
+        {name:'宁夏',value:124},
+        {name:'青海',value:660},
+        {name:'山西',value:680},
+        {name:'陕西',value:648},
+        {name:'山东',value:754},
+        {name:'上海',value:201},
+        {name:'四川',value:106},
+        {name:'天津',value:412},
+        {name:'台湾',value:562},
+        {name:'香港',value:767},
+        {name:'西藏',value:232},
+        {name:'新疆',value:269},
+        {name:'云南',value:424},
+        {name:'浙江',value:638}
+    ];
+    var mapdata=d3.map(dataset,function(d,i){
+            return d.name
+        });
+    var maxdata=d3.max(dataset,function(d,i){
+            return d.value
+        });
+    var color=d3.scaleQuantize()
+            .domain([0,maxdata])
+            .range(['red','orange','yellow','green','cyan','blue','purple']);
+    d3.json('js/111china.json',function(error,data){
+        var _projection=d3.geoMercator()
+                .center([108.9404296875,34.252676117101515])
+                .scale('500');
+        var _geopath=d3.geoPath()
+                .projection(_projection);
+        var _svg=d3.select('body')
+                .append('svg')
+                .attr('width',800)
+                .attr('height',600);
+        _svg.selectAll('path')
+                .data(data.features)
+                .enter()
+                .append('path')
+                .attr('d',function(d,i){
+                    return _geopath(d)
+                })
+                .attr('stroke','#fff')
+                .attr('stroke-width',1)
+                .attr('fill',function(d,i){
+                    var proname= d.properties.name;
+//                    console.log(d.properties.name)
+                    var prodata=mapdata.get(proname);
+                    if(prodata){
+                        return color(prodata.value)
+                    }else{
+                        return 'gray';
+                    }
+                })
+                .on('click',function(d,i){
+                    if($(this).attr('fill')=='gray'){
+                        d3.select(this.parentNode)
+                                .selectAll('path')
+                                .attr('fill',function(d,i){
+                                    var proname= d.properties.name;
+//                                console.log(d.properties.name);
+                                    var prodata=mapdata.get(proname);
+                                    if(prodata){
+                                        return color(prodata.value)
+                                    }else{
+                                        return 'gray';
+                                    }
+                                });
+                    }else{
+                        d3.select(this.parentNode)
+                                .selectAll('path')
+                                .attr('fill',function(d,i){
+                                    var proname= d.properties.name;
+//                                console.log(d.properties.name);
+                                    var prodata=mapdata.get(proname);
+                                    if(prodata){
+                                        return color(prodata.value)
+                                    }else{
+                                        return 'gray';
+                                    }
+                                });
+                        d3.select(this).attr('fill','gray')
+                    }
+                });
+        _svg.selectAll('text')
+                .data(data.features)
+                .enter()
+                .append('text')
+                .attr('x',function(d,i){
+                    var xypoint=_geopath.centroid(d);
+                    return xypoint[0]
+                })
+                .attr('y',function(d,i){
+                    var xypoint=_geopath.centroid(d);
+                    return xypoint[1]
+                })
+//                .attr('dy','1em')
+                .attr('text-anchor','middle')
+                .text(function(d,i){
+                    return d.properties.name;
+                })
+                .attr('font-size',10)
+    })
+
+</script>
